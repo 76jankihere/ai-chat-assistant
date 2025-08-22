@@ -1,215 +1,324 @@
 # Chat AI App
 
-A production-ready chat workspace that blends real-time messaging with an AI writing partner. The app uses **Stream Chat** for conversations and **OpenAI** for assisted writing and research (via Tavily search), wrapped in a modern React UI.
+A modern AI-powered chat application built with **Stream Chat**, **OpenAI**, and **live web search**. This full‑stack app provides an intelligent writing assistant for content creation, research, and real‑time collaboration.
 
 **Live Demo:** https://ai-chat-assistant-1-sct6.onrender.com/
 
----
-
-## ✨ Highlights
-
-- **Realtime Chat** – presence, typing indicators, reactions, threads  
-- **AI Writing Assistant** – drafts, rewrites, summaries, and ideas  
-- **Web Search** – pulls fresh facts via Tavily when needed  
-- **Polished UI** – React + Tailwind + shadcn/ui with dark mode  
-- **Per-channel AI agent** – created on demand, auto-cleaned when idle  
-- **JWT auth** – secure Stream Chat token generation  
-- **Deploy friendly** – env-driven config for local and cloud
+**Maintainer:** Janki Parmar
 
 ---
 
-## 🧭 Structure
+## Table of Contents
+
+- [Features](#-features)
+- [Architecture](#-architecture)
+- [Project Structure](#-project-structure)
+- [Prerequisites](#-prerequisites)
+- [Quick Start (Local)](#-quick-start-local)
+- [Environment Variables](#-environment-variables)
+- [Running the App](#-running-the-application)
+- [Deployment (Render — used in this project)](#-deployment-render--used-in-this-project)
+- [How GetStream Works in This App](#-how-getstream-works-in-this-app)
+- [AI Agent System](#-ai-agent-system)
+- [UI Stack](#-ui-components)
+- [API Endpoints](#-api-endpoints)
+- [Security](#-security-features)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+---
+
+## 🚀 Features
+
+- **Real‑time Chat:** Powered by GetStream for reliable, low‑latency messaging.
+- **AI Writing Assistant:** OpenAI integration for content, summaries, and rewriting.
+- **Live Web Search:** Uses Tavily API to fetch current information.
+- **Modern UI:** Beautiful React + Tailwind with light/dark mode.
+- **Prompt Library:** Ready‑made prompts (business, content, communication, creative).
+- **Agent Management:** Create/stop AI agents per channel with auto‑cleanup.
+- **JWT Auth:** Secure, short‑lived tokens issued by the backend.
+- **Responsive:** Mobile‑first design and accessible components.
+
+---
+
+## 🏗️ Architecture
+
+### Backend (`nodejs-ai-assistant/`)
+
+- **Node.js/Express** server
+- **Stream Chat** server‑side auth & channel utilities
+- **OpenAI** for AI responses
+- **Tavily** for web search
+- **Agent lifecycle** with automatic cleanup on inactivity
+
+### Frontend (`react-stream-ai-assistant/`)
+
+- **React + TypeScript**
+- **Stream Chat React** components
+- **Tailwind CSS + shadcn/ui** for styling
+- **Vite** dev/build tooling
+
+---
+
+## 🧭 Project Structure
 
 ```
-ai-chat-assistant/
-├─ nodejs-ai-assistant/         # Backend (Express + TypeScript)
-│  ├─ src/
+chat-ai-app/
+├─ nodejs-ai-assistant/           # Backend (Express, Stream, OpenAI, Tavily)
+│  ├─ src/                        # Source code (controllers, routes, services)
+│  ├─ package.json
 │  ├─ .env.example
-│  └─ package.json
-├─ react-stream-ai-assistant/   # Frontend (React + Vite + TypeScript)
-│  ├─ src/
-│  ├─ .env.example
-│  └─ package.json
-└─ README.md
+│  └─ (tsconfig.json | js files)
+│
+└─ react-stream-ai-assistant/     # Frontend (React, Vite, Tailwind, Stream Chat)
+   ├─ src/
+   ├─ index.html
+   ├─ package.json
+   ├─ .env.example
+   └─ vite.config.ts
 ```
 
----
-
-## 🧰 Tech Stack
-
-**Frontend**
-- React + TypeScript + Vite  
-- Stream Chat React components  
-- Tailwind CSS, shadcn/ui, Radix primitives  
-- React Router, React Hook Form
-
-**Backend**
-- Node.js + Express (TypeScript)  
-- Stream Chat server SDK  
-- OpenAI SDK  
-- Tavily (web search)  
-- CORS, dotenv
+> Folder names above match this README. If your repo differs, keep the env keys and commands the same but adjust the paths.
 
 ---
 
-## ✅ Prerequisites
+## 📋 Prerequisites
 
-- Node.js **v20+**  
-- Accounts & API keys:
-  - **Stream Chat**
-  - **OpenAI**
-  - **Tavily** (web search)
+- **Node.js 20+**
+- **npm** or **yarn**
+- **Accounts/Keys:** GetStream, OpenAI, Tavily
 
 ---
 
-## 🔐 Configuration
+## ⚡ Quick Start (Local)
 
-### 1) Backend (`nodejs-ai-assistant/.env`)
+Clone and enter the project root:
 
-Create from the example:
+```bash
+git clone <your-repository-url>
+cd chat-ai-app
+```
+
+### 1) Backend
 
 ```bash
 cd nodejs-ai-assistant
-cp .env.example .env
+cp .env.example .env    # then fill in values
+npm install
+npm run dev             # or: npm start
 ```
 
-Fill in:
+Default dev server: **http://localhost:3000**
 
-```env
-# Stream Chat (server-side)
-STREAM_API_KEY=your_stream_api_key
-STREAM_API_SECRET=your_stream_api_secret
-
-# OpenAI (server-side)
-OPENAI_API_KEY=your_openai_api_key
-
-# Tavily search (server-side)
-TAVILY_API_KEY=your_tavily_api_key
-
-# Optional: lock CORS in production
-FRONTEND_ORIGIN=https://ai-chat-assistant-1-sct6.onrender.com
-```
-
-### 2) Frontend (`react-stream-ai-assistant/.env`)
+### 2) Frontend
 
 ```bash
-cd react-stream-ai-assistant
-cp .env.example .env
+cd ../react-stream-ai-assistant
+cp .env.example .env    # then fill in values
+npm install
+npm run dev
 ```
 
-Set:
+Vite dev server: **http://localhost:8080** (or shown in terminal)
+
+---
+
+## 🔑 Environment Variables
+
+Create `.env` files in both backend and frontend folders.
+
+### Backend (`nodejs-ai-assistant/.env`)
 
 ```env
-# Stream Chat (public key used in browser)
-VITE_STREAM_API_KEY=your_stream_api_key
+# GetStream (https://getstream.io/dashboard)
+STREAM_API_KEY=your_stream_api_key_here
+STREAM_API_SECRET=your_stream_api_secret_here
 
-# Backend base URL
-# Local development:
+# OpenAI (https://platform.openai.com/api-keys)
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Tavily (https://tavily.com)
+TAVILY_API_KEY=your_tavily_api_key_here
+
+# Optional
+PORT=3000
+NODE_ENV=development
+CORS_ORIGIN=http://localhost:8080
+TOKEN_TTL_SECONDS=3600
+```
+
+### Frontend (`react-stream-ai-assistant/.env`)
+
+```env
+# Stream Chat public key for the browser
+VITE_STREAM_API_KEY=your_stream_api_key_here
+
+# Backend URL
 VITE_BACKEND_URL=http://localhost:3000
-# Production example (replace with your backend URL):
-# VITE_BACKEND_URL=https://your-backend.onrender.com
 ```
 
-> Keep real `.env` files **out of git**. Commit only the `.env.example` placeholders.
+> Ensure **VITE_BACKEND_URL** points to your running backend (local or deployed).
 
 ---
 
-## ▶️ Run Locally
+## 🚀 Running the Application
 
-### Backend
+### Start the Backend
 
 ```bash
 cd nodejs-ai-assistant
-npm install
 npm run dev
-# -> http://localhost:3000
+# or: npm start
 ```
 
-### Frontend
+### Start the Frontend
 
 ```bash
 cd react-stream-ai-assistant
-npm install
 npm run dev
-# -> http://localhost:8080
 ```
 
-Open `http://localhost:8080`, enter a username, and start chatting.
+Open your browser to the printed Vite URL (e.g., http://localhost:8080).
 
 ---
 
-## 📡 API Endpoints (Backend)
+## ☁️ Deployment (Render — _used in this project_)
 
-| Method | Path              | Purpose                              |
-|------: |-------------------|--------------------------------------|
-| GET    | `/`               | Health/status JSON                   |
-| POST   | `/token`          | Create Stream Chat auth token        |
-| POST   | `/start-ai-agent` | Initialize an AI agent for a channel |
-| POST   | `/stop-ai-agent`  | Dispose the agent and clean up       |
-| GET    | `/agent-status`   | `connected` / `connecting` / `disconnected` |
+Your live app is hosted here: **https://ai-chat-assistant-1-sct6.onrender.com/**
 
----
+You can deploy **both** backend and frontend on Render as separate services:
 
-## 🤖 AI Agent Lifecycle
+### 1) Backend on Render (Web Service)
 
-1. **Spin-up** – on demand per channel (creates agent user, joins channel)  
-2. **Work** – handles messages, calls OpenAI, performs web lookups via Tavily  
-3. **Idle cleanup** – background task disposes inactive agents automatically
+1. Push your repo to GitHub.
+2. In Render, **New > Web Service** → connect your repo.
+3. **Root Directory:** `nodejs-ai-assistant`
+4. **Environment:** Node
+5. **Build Command:**
+   - If TypeScript: `npm install && npm run build`
+   - If JavaScript only: `npm install`
+6. **Start Command:**
+   - If TypeScript build: `npm run start`
+   - If JavaScript only: `npm start` (or `node server.js`)
+7. **Environment Variables:** add
+   - `STREAM_API_KEY`
+   - `STREAM_API_SECRET`
+   - `OPENAI_API_KEY`
+   - `TAVILY_API_KEY`
+   - `PORT` = `3000` (Render sets `PORT` automatically; your app should use it)
+   - `CORS_ORIGIN` = URL of your frontend Render site
+8. Deploy. Note the **backend URL** Render gives you.
 
----
+### 2) Frontend on Render (Static Site)
 
-## 🚀 Deploy
+1. In Render, **New > Static Site** → connect the same repo.
+2. **Root Directory:** `react-stream-ai-assistant`
+3. **Build Command:** `npm install && npm run build`
+4. **Publish Directory:** `dist`
+5. **Environment Variables:**
+   - `VITE_STREAM_API_KEY` = your Stream API key
+   - `VITE_BACKEND_URL`   = the Render backend URL from step 1
+6. Deploy. Visit the static site URL (this is your public app).
 
-### Backend → Render (Web Service)
-
-- **Root Directory**: `nodejs-ai-assistant`  
-- **Build Command**: `npm ci`  
-- **Start Command**: `npm run start`  
-- **Environment Variables**: same as backend `.env`  
-- **CORS**: set `FRONTEND_ORIGIN=https://ai-chat-assistant-1-sct6.onrender.com`
-
-### Frontend → Render (Static Site)
-
-- **Root Directory**: `react-stream-ai-assistant`  
-- **Build Command**: `npm ci && npm run build`  
-- **Publish Directory**: `dist`  
-- **Env Vars**:
-  - `VITE_STREAM_API_KEY=...`
-  - `VITE_BACKEND_URL=https://<your-backend-web-service>.onrender.com`
-- **Redirects/Rewrites**: add `/*  ->  /index.html` (Rewrite) for SPA routing
-
-Deployed app: **https://ai-chat-assistant-1-sct6.onrender.com/**
-
-> On free plans, Render may “sleep” after inactivity; the first request can take a few seconds while the backend wakes up.
+> **Tip:** If you prefer a single “monolithic” Web Service, you can serve the built frontend from Express. In that case, point Express to the frontend `dist/` directory and deploy only one service.
 
 ---
 
-## 🔒 Security Notes
+## 📖 How GetStream Works in This App
 
-- Never expose server secrets in the frontend. Only `VITE_*` vars go to the browser.  
-- Lock CORS to your exact frontend origin in production.  
-- Rotate keys immediately if ever leaked.  
-- Validate inputs and return safe errors from all endpoints.
+**Core Concepts**
+1. **Client** – the browser SDK handles realtime messaging and presence
+2. **Channels** – chat rooms where users send messages
+3. **Users** – authenticated entities with Stream-issued JWTs from your backend
+4. **Messages** – text, attachments, reactions, threads
+5. **Tokens** – short‑lived JWTs signed server‑side
+
+**Integration Flow**
+
+```mermaid
+graph TD
+    A[Frontend React App] --> B[Stream Chat React Components]
+    B --> C[Stream Chat API]
+    C --> D[Backend Node.js Server]
+    D --> E[OpenAI API]
+    D --> F[Tavily Web Search]
+    D --> G[AI Agent Management]
+```
 
 ---
 
-## 🧩 Troubleshooting
+## 🤖 AI Agent System
 
-- **CORS errors** → Make sure `FRONTEND_ORIGIN` on the backend matches your static site URL exactly (scheme + host). Redeploy backend.  
-- **Frontend still calling localhost in prod** → Set `VITE_BACKEND_URL` on the static site, then redeploy the frontend.  
-- **Port 3000 already in use (local)** → Stop the existing process or change `PORT` temporarily, then rerun `npm run dev`.
+**Lifecycle**
+1. **Create** – agent is created per channel when requested
+2. **Initialize** – wires OpenAI + web search context
+3. **Handle** – processes messages and responds
+4. **Search** – Tavily fetches current info when needed
+5. **Cleanup** – auto‑disposes after inactivity
+
+**Backend Routes (typical)**
+- `POST /start-ai-agent` – start agent for a channel
+- `POST /stop-ai-agent`  – stop/cleanup agent
+- `GET  /agent-status`   – check agent state
+- `POST /token`          – issue Stream JWT for a user
+
+---
+
+## 🎨 UI Components
+
+- **Radix UI** primitives
+- **Tailwind CSS** utilities
+- **shadcn/ui** components
+- **Lucide React** icons
+- **Dark/Light** theme support
+
+---
+
+## 📡 API Endpoints
+
+- `GET /` – health check
+- `POST /start-ai-agent` – initialize AI agent for a channel
+- `POST /stop-ai-agent` – stop and cleanup AI agent
+- `GET /agent-status` – current status
+- `POST /token` – generate user auth token for Stream Chat
+
+> Exact request/response shapes may vary depending on your implementation, but the route purposes match the above.
+
+---
+
+## 🔒 Security Features
+
+- **JWT Auth** – short‑lived tokens from the backend
+- **CORS** – restrict to your frontend domain
+- **Secrets in .env** – never commit keys
+- **Input Validation** – validate all server inputs
+- **Token Expiry/Refresh** – avoid long‑lived tokens in the browser
+
+---
+
+## 🛠️ Troubleshooting
+
+- **CORS errors:** Ensure `CORS_ORIGIN` (backend) matches your deployed frontend URL.
+- **Unauthorized with Stream:** Make sure the frontend uses tokens issued by your backend; do not embed a secret in the browser.
+- **OpenAI/Tavily failures:** Double‑check keys and usage limits in the respective dashboards.
+- **Frontend can’t reach backend:** Confirm `VITE_BACKEND_URL` is the public backend URL.
+- **Render build loops:** Clear cache, verify build command and Node version.
 
 ---
 
 ## 🤝 Contributing
 
-1. Create a feature branch  
-2. Make focused changes with clear commits  
-3. Update `.env.example` if config changes  
-4. Open a PR with a short demo/screenshot
+1. Fork this repo
+2. Create a feature branch
+3. Make changes
+4. Add tests if applicable
+5. Open a PR
 
 ---
 
 ## 📄 License
 
-MIT — see `LICENSE` for details.
+This project is licensed under the **MIT License**. See [LICENSE](./LICENSE) for details.
+
+© 2025 Janki Parmar
