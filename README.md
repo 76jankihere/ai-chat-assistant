@@ -1,3 +1,5 @@
+This is my customized version of the AI Chat App. Original project: hiteshchoudhary/ai-chat-app-with-agents-getstream (MIT License).
+
 # Chat AI App
 
 A modern AI-powered chat application built with **Stream Chat**, **OpenAI**, and **web search capabilities**. This full-stack application provides an intelligent writing assistant that can help with content creation, research, and real-time collaboration.
