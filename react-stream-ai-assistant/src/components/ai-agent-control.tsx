@@ -19,7 +19,7 @@ const getStatusConfig = (status: AgentStatus, loading: boolean) => {
   if (loading) {
     return {
       variant: "secondary" as const,
-      color: "text-orange-600 dark:text-orange-400",
+      color: "text-red-600 dark:text-red-400",
       icon: Loader2,
       text: status === "connected" ? "Disconnecting" : "Connecting",
     };
@@ -29,14 +29,14 @@ const getStatusConfig = (status: AgentStatus, loading: boolean) => {
     case "connected":
       return {
         variant: "default" as const,
-        color: "text-green-600 dark:text-green-400",
+        color: "text-white-600 dark:text-white-400",
         icon: Bot,
         text: "Connected",
       };
     case "connecting":
       return {
         variant: "secondary" as const,
-        color: "text-orange-600 dark:text-orange-400",
+        color: "text-red-600 dark:text-red-400",
         icon: Loader2,
         text: "Connecting",
       };

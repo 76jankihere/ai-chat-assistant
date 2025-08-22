@@ -1,122 +1,170 @@
+/* Stream Chat base styles */
 @import "stream-chat-react/dist/css/v2/index.css";
 
+/* Tailwind layers */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ================================
+   THEME TOKENS (HSL variables)
+   ================================ */
 @layer base {
-  html {
-    overflow-y: hidden;
-  }
+  html { overflow-y: hidden; }
+
+  /* LIGHT THEME */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Surfaces & text */
+    --background: 210 28% 98%;      /* soft slate background */
+    --foreground: 222 47% 11%;      /* nearly-black text */
+
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222 47% 11%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 262 80% 60%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Brand / accent (Azure) */
+    --primary: 221 83% 53%;         /* blue-600 */
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 262 80% 60%;
+
+    /* Secondary & muted */
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 19%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 46%;
+
+    /* Utility */
+    --accent: 213 27% 94%;
+    --accent-foreground: 222 47% 19%;
+    --destructive: 0 74% 58%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 96%;
+    --ring: 221 83% 53%;
+
     --radius: 0.75rem;
+    --shadow-elev-1: 0 1px 2px hsl(222 47% 11% / 0.04), 0 4px 8px hsl(222 47% 11% / 0.06);
+    --shadow-elev-2: 0 8px 24px hsl(222 47% 11% / 0.12);
   }
 
+  /* DARK THEME */
   .dark {
-    --background: 220 13% 9%;
-    --foreground: 210 20% 95%;
-    --card: 220 15% 12%;
-    --card-foreground: 210 20% 95%;
-    --popover: 220 15% 12%;
-    --popover-foreground: 210 20% 95%;
-    --primary: 262 80% 60%;
+    --background: 220 14% 9%;
+    --foreground: 210 18% 96%;
+
+    --card: 220 14% 12%;
+    --card-foreground: 210 18% 96%;
+
+    --popover: 220 14% 12%;
+    --popover-foreground: 210 18% 96%;
+
+    --primary: 217 91% 60%;         /* brighter azure for dark bg */
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 15% 16%;
-    --secondary-foreground: 210 20% 90%;
-    --muted: 220 15% 16%;
-    --muted-foreground: 220 10% 60%;
-    --accent: 220 15% 18%;
-    --accent-foreground: 210 20% 95%;
-    --destructive: 0 75% 55%;
+
+    --secondary: 220 14% 16%;
+    --secondary-foreground: 210 14% 88%;
+
+    --muted: 220 14% 15%;
+    --muted-foreground: 220 10% 65%;
+
+    --accent: 220 14% 18%;
+    --accent-foreground: 210 18% 96%;
+
+    --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 15% 20%;
-    --input: 220 15% 18%;
-    --ring: 262 80% 60%;
+
+    --border: 220 14% 22%;
+    --input: 220 14% 18%;
+    --ring: 217 91% 60%;
+
+    --shadow-elev-1: 0 1px 2px hsl(210 10% 10% / 0.25), 0 8px 24px hsl(210 10% 5% / 0.35);
+    --shadow-elev-2: 0 16px 44px hsl(210 10% 4% / 0.45);
   }
 }
 
+/* ================================
+   GLOBAL FOUNDATION
+   ================================ */
 @layer base {
-  * {
-    @apply border-border;
-  }
+  * { @apply border-border; }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
     overscroll-behavior: none;
     -webkit-overflow-scrolling: touch;
+
+    /* subtle radial gradient for depth */
+    background:
+      radial-gradient(1200px 600px at 80% -10%, hsl(var(--primary) / 0.08), transparent 60%),
+      radial-gradient(900px 500px at 0% 100%, hsl(var(--accent) / 0.6), transparent 55%),
+      hsl(var(--background));
   }
 
-  /* Disable bouncy scroll effect globally */
-  html,
-  body {
-    overscroll-behavior-y: none;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Disable overscroll for all scrollable elements */
-  * {
-    overscroll-behavior: none;
-  }
-
-  /* Smooth scrolling */
-  html {
-    scroll-behavior: smooth;
-  }
-
-  /* Focus improvements */
+  /* Smooth scrolling & improved focus */
+  html { scroll-behavior: smooth; }
   *:focus-visible {
     outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;
+    transition: outline-color 150ms ease;
   }
 
-  /* Selection styling */
+  /* Selection colors */
   ::selection {
-    background-color: hsl(var(--primary) / 0.2);
+    background-color: hsl(var(--primary) / 0.18);
     color: hsl(var(--primary-foreground));
   }
-
-  /* Selection styling for user messages - use a contrasting color */
   .str-chat__message-bubble--me ::selection {
-    background-color: hsl(var(--background) / 0.8);
+    background-color: hsl(var(--background) / 0.85);
     color: hsl(var(--foreground));
   }
 
+  /* Nice scrollbars */
+  * {
+    overscroll-behavior: none;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground)) transparent;
+  }
+  *::-webkit-scrollbar { height: 10px; width: 10px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+  *::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.35);
+    border-radius: 9999px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.55);
+  }
+}
+
+/* ================================
+   STREAM CHAT THEME HOOKS
+   (mapped from our tokens)
+   ================================ */
+@layer base {
   .str-chat__theme-light {
     --str-chat__primary-color: hsl(var(--primary));
     --str-chat__primary-color-alpha-15: hsl(var(--primary) / 0.15);
     --str-chat__active-primary-color: hsl(var(--primary));
+
     --str-chat__surface-color: hsl(var(--background));
     --str-chat__secondary-surface-color: hsl(var(--card));
     --str-chat__tertiary-surface-color: hsl(var(--muted));
-    --str-chat__primary-surface-color: hsl(var(--primary) / 0.1);
+    --str-chat__primary-surface-color: hsl(var(--primary) / 0.10);
     --str-chat__primary-surface-color-low-emphasis: hsl(var(--primary) / 0.05);
+
     --str-chat__border-radius-circle: 9999px;
     --str-chat__border-radius-strong: calc(var(--radius) - 2px);
     --str-chat__border-color: hsl(var(--border));
+
     --str-chat__text-color: hsl(var(--foreground));
     --str-chat__text-color-low-emphasis: hsl(var(--muted-foreground));
+
     --str-chat__own-message-bubble-background: hsl(var(--primary));
     --str-chat__own-message-bubble-color: hsl(var(--primary-foreground));
-    --str-chat__message-bubble-background: hsl(var(--muted));
+    --str-chat__message-bubble-background: hsl(var(--card));
     --str-chat__message-bubble-color: hsl(var(--foreground));
+
     --str-chat__input-background-color: hsl(var(--input));
     --str-chat__avatar-background-color: hsl(var(--secondary));
     --str-chat__avatar-text-color: hsl(var(--secondary-foreground));
@@ -126,64 +174,136 @@
     --str-chat__primary-color: hsl(var(--primary));
     --str-chat__primary-color-alpha-15: hsl(var(--primary) / 0.15);
     --str-chat__active-primary-color: hsl(var(--primary));
+
     --str-chat__surface-color: hsl(var(--background));
     --str-chat__secondary-surface-color: hsl(var(--card));
     --str-chat__tertiary-surface-color: hsl(var(--muted));
-    --str-chat__primary-surface-color: hsl(var(--primary) / 0.2);
-    --str-chat__primary-surface-color-low-emphasis: hsl(var(--primary) / 0.1);
+    --str-chat__primary-surface-color: hsl(var(--primary) / 0.15);
+    --str-chat__primary-surface-color-low-emphasis: hsl(var(--primary) / 0.08);
+
     --str-chat__border-radius-circle: 9999px;
     --str-chat__border-radius-strong: calc(var(--radius) - 2px);
     --str-chat__border-color: hsl(var(--border));
+
     --str-chat__text-color: hsl(var(--foreground));
     --str-chat__text-color-low-emphasis: hsl(var(--muted-foreground));
+
     --str-chat__own-message-bubble-background: hsl(var(--primary));
     --str-chat__own-message-bubble-color: hsl(var(--primary-foreground));
-    --str-chat__message-bubble-background: hsl(var(--muted));
+    --str-chat__message-bubble-background: hsl(var(--card));
     --str-chat__message-bubble-color: hsl(var(--foreground));
+
     --str-chat__input-background-color: hsl(var(--input));
     --str-chat__avatar-background-color: hsl(var(--secondary));
     --str-chat__avatar-text-color: hsl(var(--secondary-foreground));
   }
+}
 
-  /* Chat app specific styles */
-  /* These are now handled by the Stream theme, but we can keep them for overrides if needed */
-  /* Animation for typing indicator */
-  @keyframes typing-bounce {
-    0%,
-    60%,
-    100% {
-      transform: translateY(0);
-    }
-    30% {
-      transform: translateY(-8px);
-    }
-  }
+/* ================================
+   POLISH & MICRO-INTERACTIONS
+   ================================ */
 
-  .typing-dot {
-    animation: typing-bounce 1.4s infinite;
-  }
+/* Chat container lift + glass look on panels */
+.str-chat__channel,
+.str-chat__channel-list-messenger,
+.str-chat__thread {
+  background: hsl(var(--background) / 0.65);
+  backdrop-filter: saturate(140%) blur(6px);
+}
 
-  .typing-dot:nth-child(2) {
-    animation-delay: 0.2s;
-  }
+/* Channel list cards */
+.str-chat__channel-list-messenger {
+  box-shadow: var(--shadow-elev-1);
+  border-right: 1px solid hsl(var(--border));
+}
+.dark .str-chat__channel-list-messenger {
+  box-shadow: var(--shadow-elev-1);
+}
 
-  .typing-dot:nth-child(3) {
-    animation-delay: 0.4s;
-  }
+/* Message bubbles */
+.str-chat__message-bubble {
+  background: var(--str-chat__message-bubble-background);
+  color: var(--str-chat__message-bubble-color);
+  border: 1px solid var(--str-chat__border-color);
+  border-radius: calc(var(--radius) + 6px);
+  box-shadow: 0 1px 0 hsl(var(--border));
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 150ms ease;
+}
+.str-chat__message-bubble:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-elev-1);
+}
+.str-chat__message-bubble--me {
+  background: linear-gradient(
+    180deg,
+    hsl(var(--primary) / 0.98),
+    hsl(var(--primary))
+  );
+  color: hsl(var(--primary-foreground));
+  border: 1px solid hsl(var(--primary) / 0.75);
+}
 
-  /* Stream message bubble styling */
-  .str-chat__message-bubble {
-    background: var(--str-chat__message-bubble-background);
-    color: var(--str-chat__message-bubble-color);
-    border: 1px solid var(--str-chat__border-color);
-  }
+/* Input area */
+.str-chat__message-input {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) + 2px);
+  box-shadow: var(--shadow-elev-1);
+}
+.str-chat__message-input textarea {
+  background: transparent;
+}
 
-  .str-chat__message-bubble--me {
-    background: var(--str-chat__own-message-bubble-background);
-    color: var(--str-chat__own-message-bubble-color);
-  }
+/* Buttons + send */
+.str-chat__message-input-send-button,
+button[data-testid="send-button"],
+button.str-chat__recorder-button {
+  border-radius: 10px !important;
+  transition: transform 120ms ease, filter 120ms ease, box-shadow 120ms ease;
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.25);
+}
+.str-chat__message-input-send-button:hover,
+button[data-testid="send-button"]:hover,
+button.str-chat__recorder-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow: 0 8px 20px hsl(var(--primary) / 0.35);
+}
 
-  .str-chat__theme-dark .str-chat__channel-list-messenger {
-    background-color: hsl(var(--background));
-  }
+/* Avatars */
+.str-chat__avatar {
+  border-radius: 9999px !important;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 2px 6px hsl(222 47% 11% / 0.12);
+}
+
+/* Typing indicator animation */
+@keyframes typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+}
+.typing-dot { animation: typing-bounce 1.3s infinite; }
+.typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+/* Top app bar or header (if present) */
+.app-gradient-bar {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--primary) / 0.25),
+    hsl(var(--accent) / 0.2) 35%,
+    transparent 70%
+  );
+}
+
+/* Minor utility: lifted cards */
+.ui-elevated {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-elev-1);
+}
+
+/* Ensure Stream light panel matches our bg */
+.str-chat__theme-dark .str-chat__channel-list-messenger {
+  background-color: hsl(var(--background));
 }
